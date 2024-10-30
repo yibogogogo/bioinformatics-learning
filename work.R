@@ -1,4 +1,4 @@
-#肿瘤通路富集分析脚本，持续更新
+#肿瘤通路富集分析脚本
 #环境配置，本人使用R4.4.1版本，首先使用getwd()命令获得工作目录，使用setwd("path")设置工作目录，将文件拷贝至该目录
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -9,6 +9,7 @@ BiocManager::install("clusterProfiler")
 BiocManager::install("org.Hs.eg.db")  
 BiocManager::install("pathview")
 BiocManager::install("DESeq2")
+BiocManager::install("pheatmap")
 library('DESeq2')
 library('EnhancedVolcano')
 setwd('/Users/zhang/Library/Mobile Documents/com~apple~CloudDocs/工作文件/生物信息学课程作业')
@@ -21,27 +22,22 @@ dds <- DESeqDataSetFromMatrix(countData = countData,
                               design = ~ condition)
 dds <- DESeq(dds)
 res <- results(dds, contrast = c("condition", "PTC", "ATC"), alpha = 0.05)  
-
-
-#查看结果,本人选择基因KRAS是第9185位
-############################################################################################
+# 查看结果,本人选择基因KRAS是第9185位  
 print(res[9185, ])
-############################################################################################
-
 # 导出结果到CSV文件  
 write.csv(as.data.frame(res), "DESeq2_results.csv")
 
 #此处引用老师实验代码绘制pheatmap
 library(pheatmap)
-deseq_results_significant <- read.table("PTC_vs_ATC_DEG.txt") #读入显著差异表达结果
+
 deseq_results_significant <- res[order(deseq_results_significant$padj), ]
 head(deseq_results_significant)
 significant_genes <- rownames(deseq_results_significant) #提取显著差异基因
 tpm_sig = tpm[significant_genes, ]
 tpm_sig = na.omit(tpm_sig)
 pheatmap(log2(t(tpm_sig + 1)), show_colnames = FALSE) #所有差异基因热图
-pheatmap(log2(t(tpm_sig[1:30, ] + 1))) #差异基因top30热图
-
+pheat <- pheatmap(log2(t(tpm_sig[1:30, ] + 1))) #差异基因top30热图
+ggsave(filename = '表达差异pheatmap.png',plot = pheat,width = 12, height = 9)
 #火山图绘图
 p1 <- EnhancedVolcano(res,  
                 lab = rownames(res), # 使用基因名称作为标签  
@@ -78,6 +74,7 @@ geneEntrezIDs <- bitr(geneList, fromType = "SYMBOL", toType = "ENTREZID", OrgDb 
 ekegg <- enrichKEGG(gene         = geneEntrezIDs,  
                     organism     = 'hsa',  
                     pvalueCutoff = 0.05)
+
 #go富集分析绘图
 gob_bar <- barplot(ego, showCategory=10, title="GO Biological Process Enrichment")
 gob_dot <- dotplot(ego, showCategory=20, title="GO Biological Process Enrichment")
