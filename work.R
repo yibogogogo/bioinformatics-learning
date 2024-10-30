@@ -1,4 +1,4 @@
-#肿瘤通路富集分析脚本
+#肿瘤通路富集分析脚本，持续更新
 #环境配置，本人使用R4.4.1版本，首先使用getwd()命令获得工作目录，使用setwd("path")设置工作目录，将文件拷贝至该目录
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
