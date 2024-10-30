@@ -1,5 +1,6 @@
 #肿瘤通路富集分析脚本
 #环境配置，本人使用R4.4.1版本，首先使用getwd()命令获得工作目录，使用setwd("path")设置工作目录，将文件拷贝至该目录
+#包安装好的不需要再装
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 options(BioC_mirror="https://mirrors.tuna.tsinghua.edu.cn/bioconductor")  
