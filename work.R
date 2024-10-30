@@ -21,8 +21,13 @@ dds <- DESeqDataSetFromMatrix(countData = countData,
                               design = ~ condition)
 dds <- DESeq(dds)
 res <- results(dds, contrast = c("condition", "PTC", "ATC"), alpha = 0.05)  
-# 查看结果,本人选择基因KRAS是第9185位  
+
+
+#查看结果,本人选择基因KRAS是第9185位
+############################################################################################
 print(res[9185, ])
+############################################################################################
+
 # 导出结果到CSV文件  
 write.csv(as.data.frame(res), "DESeq2_results.csv")
 #火山图绘图
