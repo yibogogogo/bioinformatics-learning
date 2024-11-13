@@ -28,17 +28,6 @@ print(res[9185, ])
 # 导出结果到CSV文件  
 write.csv(as.data.frame(res), "DESeq2_results.csv")
 
-#此处引用老师实验代码绘制pheatmap
-library(pheatmap)
-
-deseq_results_significant <- res[order(deseq_results_significant$padj), ]
-head(deseq_results_significant)
-significant_genes <- rownames(deseq_results_significant) #提取显著差异基因
-tpm_sig = tpm[significant_genes, ]
-tpm_sig = na.omit(tpm_sig)
-pheatmap(log2(t(tpm_sig + 1)), show_colnames = FALSE) #所有差异基因热图
-pheat <- pheatmap(log2(t(tpm_sig[1:30, ] + 1))) #差异基因top30热图
-ggsave(filename = '表达差异pheatmap.png',plot = pheat,width = 12, height = 9)
 #火山图绘图
 p1 <- EnhancedVolcano(res,  
                 lab = rownames(res), # 使用基因名称作为标签  
